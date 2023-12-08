@@ -5,10 +5,15 @@ namespace Y2023;
 
 public static class Day01
 {
-    private const string SingleDigits= @"\d+";
-    private const string SingleDigitsAndDigitsAsText = @"\d|one|two|three|four|five|six|seven|eight|nine";
-    public static void Part1(string[] lines, bool debug = false)
+    private const string SingleDigit= @"\d";
+    private const string SingleDigitAndDigitAsText = @"\d|one|two|three|four|five|six|seven|eight|nine";
+
+
+    public static string Part1(string[] lines, bool debug = false)
     {
+        var patternLeftToRight = new Regex(SingleDigit);
+        var patternRightToLeft = new Regex(SingleDigit, RegexOptions.RightToLeft);
+        
         if (lines == null) throw new ArgumentNullException(nameof(lines));
         
         var sum = 0;
@@ -16,15 +21,16 @@ public static class Day01
         foreach (var line in lines)
         {
             lineNumber++;
-            var firstDigit = '0'; 
-            var lastDigit = '0';
-            var pattern = new Regex(SingleDigits);
-            var match = pattern.Match(line);
+            var firstDigit = "0"; 
+            var lastDigit = "0";
+            
+            var firstMatch = patternLeftToRight.Match(line);
+            var lastMatch = patternRightToLeft.Match(line);
 
-            if (match.Success)
+            if (firstMatch.Success & lastMatch.Success)
             {
-                firstDigit = match.Value[0];
-                lastDigit = match.Value[^1];
+                firstDigit = firstMatch.Value;
+                lastDigit = lastMatch.Value;
             }
             
             var number = Convert.ToInt32($"{firstDigit}{lastDigit}");
@@ -32,15 +38,16 @@ public static class Day01
             sum += number;
         }
         Console.WriteLine($"The sum for part 1 is {sum}");
+        return sum.ToString();
     }
     
     
-    public static void Part2(string[] lines, bool debug = false)
+    public static string Part2(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
         
-        var patternLeftToRight = new Regex(SingleDigitsAndDigitsAsText);
-        var patternRightToLeft = new Regex(SingleDigitsAndDigitsAsText, RegexOptions.RightToLeft);
+        var patternLeftToRight = new Regex(SingleDigitAndDigitAsText);
+        var patternRightToLeft = new Regex(SingleDigitAndDigitAsText, RegexOptions.RightToLeft);
         
         var sum = 0;
         var lineNumber = 0;
@@ -65,6 +72,7 @@ public static class Day01
             sum += number;
         }
         Console.WriteLine($"The sum for part 2 is {sum}");
+        return sum.ToString();    
     }
 
     private static string ReplaceWordWithNumber(string text)
