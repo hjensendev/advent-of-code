@@ -40,8 +40,13 @@ public static class Day02
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
         var games = GetGames(lines);
-        
-        return "";
+        var sumOfPowers = 0;
+        foreach (var game in games)
+        {
+            if (debug) Console.WriteLine($"Game {game.Number}: Power:{game.PowerOfMinCubes} mR: {game.MinRed} mG: {game.MinGreen} mB: {game.MinBlue}");
+            sumOfPowers += game.PowerOfMinCubes;
+        }
+        return sumOfPowers.ToString();
     }
 
 
@@ -106,10 +111,19 @@ public static class Day02
     {
         public readonly int Number;
         public readonly List<Draw> Draws;
+        public int MinRed;
+        public int MinGreen;
+        public int MinBlue;
+        public int PowerOfMinCubes;
         public Game(int number, List<Draw>draws)
         {
             Number = number;
             Draws = draws;
+
+            MinRed = draws.Max(draw => draw.Red);
+            MinGreen = draws.Max(draw => draw.Green);
+            MinBlue = draws.Max(draw => draw.Blue);
+            PowerOfMinCubes = MinRed * MinGreen * MinBlue;
         }
     }
     

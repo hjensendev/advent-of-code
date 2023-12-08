@@ -22,4 +22,23 @@ public class Day02
         var realResult = Y2023.Day02.Part1(realData);
         Assert.AreEqual("2512", realResult);        
     }    
+    
+    
+    [TestMethod]
+    public void TestDay02PartTwoExample()
+    {
+        // Example
+        var exampleData = DataFileReader.ReadFileAsLines(2,null, true);
+        var exampleResult = Y2023.Day02.Part2(exampleData);
+        Assert.AreEqual("2286", exampleResult);
+    }
+    
+    [TestMethod]
+    public void TestDay02PartTwoReal()
+    {
+        // Real
+        var realData = DataFileReader.ReadFileAsLines(2);
+        var realResult = Y2023.Day02.Part2(realData);
+        Assert.AreEqual("67335", realResult);     
+    }
 }
