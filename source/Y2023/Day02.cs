@@ -9,16 +9,49 @@ public static class Day02
     private const string PatternNumberOfGreen = @"\d+ green";
     private const string PatternNumberOfBlue= @"\d+ blue";
     private const string Count= @"\d+";
+    
+    
+    
     public static string Part1(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
 
+        var games = GetGames(lines);
+
+        var validGameSum = 0;
+        var validGameCount = 0;
+        foreach (var game in games)
+        {
+            if (!Bag1.IsValidGame(game)) continue;
+            validGameSum += game.Number;
+            validGameCount++;
+        }
+
+        Console.WriteLine($"{validGameCount} of {games.Count} are valid");
+        Console.WriteLine($"The sum of valid games are {validGameSum}");
+        return validGameSum.ToString();
+    }
+    
+    
+    
+    
+    
+    public static string Part2(string[] lines, bool debug = false)
+    {
+        if (lines == null) throw new ArgumentNullException(nameof(lines));
+        var games = GetGames(lines);
+        
+        return "";
+    }
+
+
+    private static List<Game> GetGames(IEnumerable<string> lines)
+    {
         var countPattern = new Regex(Count);
         var gamePattern = new Regex(PatternGame);
         var numberOfRedPattern = new Regex(PatternNumberOfRed);
         var numberOfGreenPattern = new Regex(PatternNumberOfGreen);
         var numberOfBluePattern = new Regex(PatternNumberOfBlue);
-        
         var games = new List<Game>();
 
         foreach (var line in lines)
@@ -38,29 +71,9 @@ public static class Day02
                 var b = blue.Length > 0 ? Convert.ToInt32(blue.Value.Replace(" blue", "")) : 0;
                 draws.Add(new Draw(r,g,b));
             }
-
             games.Add(new Game(gameNumber, draws));
         }
-        if (games.Count != lines.Length) throw new Exception("Invalid number of games");
-        var validGameSum = 0;
-        var validGameCount = 0;
-        foreach (var game in games)
-        {
-            if (!Bag1.IsValidGame(game)) continue;
-            validGameSum += game.Number;
-            validGameCount++;
-        }
-
-        Console.WriteLine($"{validGameCount} of {games.Count} are valid");
-        Console.WriteLine($"The sum of valid games are {validGameSum}");
-        return validGameSum.ToString();
-    }
-    
-    
-    public static string Part2(string[] lines, bool debug = false)
-    {
-        if (lines == null) throw new ArgumentNullException(nameof(lines));
-        return "";
+        return games;
     }
     
     private static class Bag1
