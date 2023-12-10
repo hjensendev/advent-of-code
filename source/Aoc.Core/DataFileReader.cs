@@ -31,4 +31,18 @@ public static class DataFileReader
         Console.WriteLine($"There are {data.Length} lines");
         return data;
     }
+    
+    public static char[,] ReadFileAsArray(int day, int? part = 0, bool? example = false)
+    {
+        var lines = ReadFileAsLines(day, part, example);
+        var data = new char[lines[0].Length,lines.Length];
+        for (int row = 0; row < lines.Length; row++)
+        {
+            for (int col = 0; col < lines[0].Length; col++)
+            {
+                data[row, col] = lines[row][col];
+            }    
+        }
+        return data;
+    }
 }
