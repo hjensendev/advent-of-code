@@ -1,20 +1,18 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Y2023;
 
 public static class Day03
 {
-    public static char[] ValidSymbols = new[] { '!','\"','#','$','%','&','/','(',')','=','@','*',',','<','>','^','+','?','´','-',':',';','_','^','~','\'','<','>',','};
-    public static char ValidGear = '*';
+    private static readonly char[] ValidSymbols = new[] { '!','\"','#','$','%','&','/','(',')','=','@','*',',','<','>','^','+','?','´','-',':',';','_','^','~','\'','<','>',','};
+    private static readonly char ValidGear = '*';
     public static string Part1(char[,] data, bool debug = false)
     {
         
-        var result = 0;
         if (debug) PrintArray(data);
         var es = new EngineSchematic(data);
-        result = es.PartNumbers.Sum(item => item.Value);
+        var result = es.PartNumbers.Sum(item => item.Value);
         
         Console.WriteLine($"Result: {result}");
         return result.ToString();
@@ -22,40 +20,16 @@ public static class Day03
     
     public static string Part2(char[,] data, bool debug = false)
     {
-        
-        var result = 0;
         if (debug) PrintArray(data);
         var es = new EngineSchematic(data);
-        result = es.Gears.Sum(gear => gear.Ratio);
+        var result = es.Gears.Sum(gear => gear.Ratio);
         
         Console.WriteLine($"Result: {result}");
         return result.ToString();
     }
 
-    private static IEnumerable<Number> GetAllNumbers(char[,] data)
-    {
-        var filterNumber= @"\d+";
-        var patternNumber = new Regex(filterNumber);
-        var numbers = new List<Number>();
 
-        for (var row = 0; row < data.GetLength(0); row++)
-        {
-            var line = new StringBuilder();
-            for (var col = 0; col < data.GetLength(1); col++)
-            {
-                line.Append(data[row,col]);
-            }
-
-            var match = patternNumber.Match(line.ToString());
-            while (match.Success)
-            {
-                numbers.Add(new Number(Convert.ToInt32(match.Value),new Cell(row,match.Index),new Cell(row,match.Index+ match.Length - 1)));
-                match = match.NextMatch();
-            }
-        }
-        return numbers;
-    }
-
+    
     private static void PrintArray(char[,] data)
     {
         for (int row = 0; row < data.GetLength(0); row++)
@@ -88,23 +62,44 @@ public static class Day03
             PartNumbers = GetAllPartNumbers();
             Gears = GetAllGears();
         }
+        
+        
+        private static IEnumerable<Number> GetAllNumbers(char[,] data)
+        {
+            var filterNumber= @"\d+";
+            var patternNumber = new Regex(filterNumber);
+            var numbers = new List<Number>();
+
+            for (var row = 0; row < data.GetLength(0); row++)
+            {
+                var line = new StringBuilder();
+                for (var col = 0; col < data.GetLength(1); col++)
+                {
+                    line.Append(data[row,col]);
+                }
+
+                var match = patternNumber.Match(line.ToString());
+                while (match.Success)
+                {
+                    numbers.Add(new Number(Convert.ToInt32(match.Value),new Cell(row,match.Index),new Cell(row,match.Index+ match.Length - 1)));
+                    match = match.NextMatch();
+                }
+            }
+            return numbers;
+        }
+        
 
         private IEnumerable<Number> GetAllPartNumbers()
         {
             var list = new List<Number>();
-            int startAdjacentRow = 0;
-            int startAdjacentCol = 0;
-            int endAdjacentRow = 0;
-            int endAdjacentCol = 0;
-
             foreach (var number in Numbers)
             {
                 Console.WriteLine($"Checking {number}");
                 // Define Search boundaries
-                startAdjacentRow = number.StartPosition.Row == 0  ? 0  : number.StartPosition.Row - 1;
-                startAdjacentCol = number.StartPosition.Col == 0  ? 0  : number.StartPosition.Col - 1;
-                endAdjacentRow = number.EndPosition.Row == MaxRow ? MaxRow : number.EndPosition.Row + 1;
-                endAdjacentCol = number.EndPosition.Col == MaxCol ? MaxCol : number.EndPosition.Col + 1;
+                var startAdjacentRow = number.StartPosition.Row == 0  ? 0  : number.StartPosition.Row - 1;
+                var startAdjacentCol = number.StartPosition.Col == 0  ? 0  : number.StartPosition.Col - 1;
+                var endAdjacentRow = number.EndPosition.Row == MaxRow ? MaxRow : number.EndPosition.Row + 1;
+                var endAdjacentCol = number.EndPosition.Col == MaxCol ? MaxCol : number.EndPosition.Col + 1;
 
                 for (int row = startAdjacentRow; row <= endAdjacentRow; row++)
                 {
@@ -130,19 +125,14 @@ public static class Day03
         private IEnumerable<Gear> GetAllGears()
         {
             var list = new List<Gear>();
-            int startAdjacentRow = 0;
-            int startAdjacentCol = 0;
-            int endAdjacentRow = 0;
-            int endAdjacentCol = 0;
-
             foreach (var number in Numbers)
             {
                 Console.WriteLine($"Checking {number}");
                 // Define Search boundaries
-                startAdjacentRow = number.StartPosition.Row == 0  ? 0  : number.StartPosition.Row - 1;
-                startAdjacentCol = number.StartPosition.Col == 0  ? 0  : number.StartPosition.Col - 1;
-                endAdjacentRow = number.EndPosition.Row == MaxRow ? MaxRow : number.EndPosition.Row + 1;
-                endAdjacentCol = number.EndPosition.Col == MaxCol ? MaxCol : number.EndPosition.Col + 1;
+                var startAdjacentRow = number.StartPosition.Row == 0  ? 0  : number.StartPosition.Row - 1;
+                var startAdjacentCol = number.StartPosition.Col == 0  ? 0  : number.StartPosition.Col - 1;
+                var endAdjacentRow = number.EndPosition.Row == MaxRow ? MaxRow : number.EndPosition.Row + 1;
+                var endAdjacentCol = number.EndPosition.Col == MaxCol ? MaxCol : number.EndPosition.Col + 1;
 
                 for (int row = startAdjacentRow; row <= endAdjacentRow; row++)
                 {
@@ -172,10 +162,12 @@ public static class Day03
             return list;
         }
         
+        
         private static bool IsValidSymbol(char c)
         {
             return ValidSymbols.Contains(c);
         }
+        
         
         private static bool IsGear(char c)
         {
@@ -183,57 +175,56 @@ public static class Day03
         }
     }
 
+    
     internal class Gear
     {
         public string Id;
-        public Number? Part1;
-        public Number? Part2;
+        private Number? _part1;
+        private Number? _part2;
         public override string ToString()
         {
             return Ratio.ToString();
         }
-
-        public int Ratio
-        {
-            get
-            {
-                if (Part1 == null || Part2 == null) return 0;
-                return Part1.Value * Part2.Value;
-            }
-        }
-
         public Gear(Cell cell)
         {
             Id = cell.Id;
         }
-
+        
+        
+        public int Ratio
+        {
+            get
+            {
+                if (_part1 == null || _part2 == null) return 0;
+                return _part1.Value * _part2.Value;
+            }
+        }
+        
+        
         public void AddPart(Number part)
         {
-            if (Part1 == null)
+            if (_part1 == null)
             {
-                Part1 = part;
+                _part1 = part;
                 Console.WriteLine($"Part1: Add part {part.Value} to gear {Id}");
                 return;
             }
-            if (Part2 == null)
+            if (_part2 == null)
             {
-                Part2 = part;
+                _part2 = part;
                 Console.WriteLine($"Part2: Add part {part.Value} to gear {Id}");
                 return;
             }
-            if (Part2 != null) throw new Exception($"Too many parts for gear {Id}");
+            if (_part2 != null) throw new Exception($"Too many parts for gear {Id}");
         }
     }
     
+    
     internal class Number
     {
-        public int Value;
-        public Cell StartPosition;
-        public Cell EndPosition;
-        public override string ToString()
-        {
-            return $"{Value}:{StartPosition}:{EndPosition}";
-        }
+        public readonly int Value;
+        public readonly Cell StartPosition;
+        public readonly Cell EndPosition;
 
         public Number(int value, Cell startPosition, Cell endPosition)
         {
@@ -248,16 +239,7 @@ public static class Day03
     {
         public int Row;
         public int Col;
-
-        public string Id
-        {
-            get { return $"{Row}{Col}"; }
-        }
-
-        public override string ToString()
-        {
-            return $"{Row},{Col}";
-        }
+        public string Id => $"{Row}{Col}";
 
         public Cell(int row, int col)
         {
