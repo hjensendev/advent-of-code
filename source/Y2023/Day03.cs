@@ -7,6 +7,7 @@ namespace Y2023;
 public static class Day03
 {
     public static char[] ValidSymbols = new[] { '!','\"','#','$','%','&','/','(',')','=','@','*',',','<','>','^','+','?','´','-',':',';','_','^','~','\'','<','>',','};
+    public static char ValidGear = '*';
     public static string Part1(char[,] data, bool debug = false)
     {
         
@@ -14,6 +15,18 @@ public static class Day03
         if (debug) PrintArray(data);
         var es = new EngineSchematic(data);
         result = es.PartNumbers.Sum(item => item.Value);
+        
+        Console.WriteLine($"Result: {result}");
+        return result.ToString();
+    }
+    
+    public static string Part2(char[,] data, bool debug = false)
+    {
+        
+        var result = 0;
+        if (debug) PrintArray(data);
+        var es = new EngineSchematic(data);
+        result = es.Gears.Sum(gear => gear.Ratio);
         
         Console.WriteLine($"Result: {result}");
         return result.ToString();
@@ -62,6 +75,7 @@ public static class Day03
         private char[,] _data;
         public IEnumerable<Number> Numbers;
         public IEnumerable<Number> PartNumbers;
+        public IEnumerable<Gear> Gears;
         public int MaxCol;
         public int MaxRow;
 
@@ -72,6 +86,7 @@ public static class Day03
             MaxRow = data.GetLength(0) - 1;
             Numbers = GetAllNumbers(data);
             PartNumbers = GetAllPartNumbers();
+            Gears = GetAllGears();
         }
 
         private IEnumerable<Number> GetAllPartNumbers()
@@ -111,12 +126,104 @@ public static class Day03
             return list;
         }
 
-        private bool IsValidSymbol(char c)
+        
+        private IEnumerable<Gear> GetAllGears()
+        {
+            var list = new List<Gear>();
+            int startAdjacentRow = 0;
+            int startAdjacentCol = 0;
+            int endAdjacentRow = 0;
+            int endAdjacentCol = 0;
+
+            foreach (var number in Numbers)
+            {
+                Console.WriteLine($"Checking {number}");
+                // Define Search boundaries
+                startAdjacentRow = number.StartPosition.Row == 0  ? 0  : number.StartPosition.Row - 1;
+                startAdjacentCol = number.StartPosition.Col == 0  ? 0  : number.StartPosition.Col - 1;
+                endAdjacentRow = number.EndPosition.Row == MaxRow ? MaxRow : number.EndPosition.Row + 1;
+                endAdjacentCol = number.EndPosition.Col == MaxCol ? MaxCol : number.EndPosition.Col + 1;
+
+                for (int row = startAdjacentRow; row <= endAdjacentRow; row++)
+                {
+                    var foundGear = false;
+                    for (int col = startAdjacentCol; col <= endAdjacentCol; col++)
+                    {
+                        //Console.WriteLine($"Checking row:{row} col:{col} char: {_data[row, col]}");
+                        foundGear = IsGear(_data[row, col]);
+                        if (foundGear)
+                        {
+                            var id = $"{row}{col}";
+                            Console.WriteLine($"Found gear with id {id}");
+                            var gear = list.FirstOrDefault(gear => gear.Id == id) ?? new Gear(new Cell(row,col));
+                            
+                            if (!list.Contains(gear))
+                            {
+                                Console.WriteLine($"Add new gear with id {gear.Id}");
+                                list.Add(gear);
+                            }
+                            gear.AddPart(number);
+                            break;
+                        }
+                    }
+                    if (foundGear) break;
+                }
+            }
+            return list;
+        }
+        
+        private static bool IsValidSymbol(char c)
         {
             return ValidSymbols.Contains(c);
         }
+        
+        private static bool IsGear(char c)
+        {
+            return c == ValidGear;
+        }
     }
-    
+
+    internal class Gear
+    {
+        public string Id;
+        public Number? Part1;
+        public Number? Part2;
+        public override string ToString()
+        {
+            return Ratio.ToString();
+        }
+
+        public int Ratio
+        {
+            get
+            {
+                if (Part1 == null || Part2 == null) return 0;
+                return Part1.Value * Part2.Value;
+            }
+        }
+
+        public Gear(Cell cell)
+        {
+            Id = cell.Id;
+        }
+
+        public void AddPart(Number part)
+        {
+            if (Part1 == null)
+            {
+                Part1 = part;
+                Console.WriteLine($"Part1: Add part {part.Value} to gear {Id}");
+                return;
+            }
+            if (Part2 == null)
+            {
+                Part2 = part;
+                Console.WriteLine($"Part2: Add part {part.Value} to gear {Id}");
+                return;
+            }
+            if (Part2 != null) throw new Exception($"Too many parts for gear {Id}");
+        }
+    }
     
     internal class Number
     {
@@ -141,6 +248,12 @@ public static class Day03
     {
         public int Row;
         public int Col;
+
+        public string Id
+        {
+            get { return $"{Row}{Col}"; }
+        }
+
         public override string ToString()
         {
             return $"{Row},{Col}";
