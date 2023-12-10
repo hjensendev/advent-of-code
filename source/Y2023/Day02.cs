@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 namespace Y2023;
 
 public static class Day02
@@ -26,7 +25,6 @@ public static class Day02
             validGameSum += game.Number;
             validGameCount++;
         }
-
         Console.WriteLine($"{validGameCount} of {games.Count} are valid");
         Console.WriteLine($"The sum of valid games are {validGameSum}");
         return validGameSum.ToString();

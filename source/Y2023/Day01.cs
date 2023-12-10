@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design.Serialization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Y2023;
 

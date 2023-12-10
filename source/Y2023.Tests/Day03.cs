@@ -5,7 +5,7 @@ namespace Y2023.Tests;
 public class Day03
 {
     [TestMethod]
-    public void TestDay02PartOneExample()
+    public void TestDay03PartOneExample()
     {
         // Example
         var exampleData = DataFileReader.ReadFileAsArray(3, null, true);
@@ -14,7 +14,7 @@ public class Day03
     }
     
     [TestMethod]
-    public void TestDay02PartOneReal()
+    public void TestDay03PartOneReal()
     {
         // Real
         var realData = DataFileReader.ReadFileAsArray(3);
@@ -24,7 +24,7 @@ public class Day03
     
     
     [TestMethod]
-    public void TestDay02PartTwoExample()
+    public void TestDay03PartTwoExample()
     {
         // Example
         var exampleData = DataFileReader.ReadFileAsArray(3, null, true);
@@ -33,7 +33,7 @@ public class Day03
     }
     
     [TestMethod]
-    public void TestDay02PartTwoReal()
+    public void TestDay03PartTwoReal()
     {
         // Example
         var realData = DataFileReader.ReadFileAsArray(3);
