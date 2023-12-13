@@ -22,15 +22,14 @@ public class Day04
         Assert.AreEqual("20829", realResult);
     }
     
-    
-    // [TestMethod]
-    // public void TestDay04PartTwoExample()
-    // {
-    //     // Example
-    //     var exampleData = DataFileReader.ReadFileAsArray(4, null, true);
-    //     var exampleResult = Y2023.Day04.Part2(exampleData);
-    //     Assert.AreEqual("x", exampleResult);
-    // }
+    [TestMethod]
+    public void TestDay04PartTwoExample()
+    {
+        // Example
+        var exampleData = DataFileReader.ReadFileAsLines(4, null, true);
+        var exampleResult = Y2023.Day04.Part2(exampleData);
+        Assert.AreEqual("30", exampleResult);
+    }
     //
     // [TestMethod]
     // public void TestDay04PartTwoReal()
