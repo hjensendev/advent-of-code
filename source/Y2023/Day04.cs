@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -7,44 +6,48 @@ namespace Y2023;
 
 public static class Day04
 {
-    private const int MaxThreads = 8;
     private const string PatternGame = @"\d+:";
     private const string PatternCount= @"\d+";
     private const char WinNumbersSeparator = ':';
     private const char MyNumbersSeparator = '|';
     private static bool _debug;
     
+    
+    
     public static string Part1(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
         _debug = debug;
 
-        var cardCollection = GetCards(lines);
+        var cardCollection = ParseLines(lines);
         var result = cardCollection.Cards.Sum(card => card.Value);
         
         Console.WriteLine($"Result: {result}");
         return result.ToString(CultureInfo.InvariantCulture);
     }
     
+    
+    
     public static string Part2(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
         _debug = debug;
         
-        var cardCollection = GetCards(lines);
+        var cardCollection = ParseLines(lines);
         cardCollection.ProcessWinningCards();
 
         var result = cardCollection.Cards.Count();
         Console.WriteLine($"Result: {result}");
         return result.ToString(CultureInfo.InvariantCulture);
     }
+    
 
-    private static CardCollection GetCards(IEnumerable<string> lines)
+    private static CardCollection ParseLines(IEnumerable<string> lines)
     {
         var countPattern = new Regex(PatternCount);
         var gamePattern = new Regex(PatternGame);
-
         var cards = new List<Card>();
+        
         foreach (var orgLine in lines)
         {
             var line =  orgLine.Replace("  ", " ");
@@ -59,6 +62,8 @@ public static class Day04
         return new CardCollection(cards);
     }
 
+    
+    
     private class CardCollection
     {
         public IEnumerable<Card> Cards;
@@ -70,6 +75,7 @@ public static class Day04
             _originalCards = Cards.ToArray();
         }
         
+        
 
         public void ProcessWinningCards()
         {
@@ -79,18 +85,18 @@ public static class Day04
             sw.Start();
             var arrayOfCards = Cards.ToArray();
 
-            var range = ProcessRangeOfCards(0, arrayOfCards.Length);
-            Cards = range;
+            var result = ProcessCardRange(0, arrayOfCards.Length);
+            Cards = result;
  
             sw.Stop();
             Console.WriteLine($"Processed {Cards.Count()} cards in {sw.Elapsed}");
         }
 
-        private IEnumerable<Card> ProcessRangeOfCards(int start, int end)
+        
+        
+        private IEnumerable<Card> ProcessCardRange(int start, int end)
         {
             var cardsToProcess = Cards.Take(new Range(start, end)).ToList();
-            var swCycle = new Stopwatch();
-            swCycle.Start();
             
             var i = start;
             while (i <= cardsToProcess.Count - 1)
@@ -103,10 +109,9 @@ public static class Day04
                 cardsToProcess.AddRange(prizeCards);
                 i++;
             }
-            swCycle.Stop();
-            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} completed cycle in {swCycle.Elapsed}");
             return cardsToProcess;
         }
+        
         
         
         private IEnumerable<Card> ProcessCard(Card card)
@@ -144,6 +149,8 @@ public static class Day04
             if (_debug) Console.WriteLine($"Card {Id} has {MyWinningNumbers.Count()} winners and is worth {Value}");
         }
 
+        
+        
         private string[] GetMyWinningNumbers()
         {
             var winners = new List<string>();
@@ -157,6 +164,8 @@ public static class Day04
             return winners.ToArray();
         }
 
+        
+        
         private double CalculateCardValue()
         {
             if (MyWinningNumbers.Length == 0) return 0;
