@@ -72,7 +72,7 @@ public static class Day04
             _originalCards = cardList;
         }
 
-        public List<Card> GetOriginalCards(Range range)
+        private IEnumerable<Card> GetOriginalCards(Range range)
         {
             return _originalCards.Take(range).ToList();
         }
@@ -84,9 +84,9 @@ public static class Day04
             var sw = new Stopwatch();
             sw.Start();
             var lastStatus = -1;
+            var arrayOfCards = Cards.ToArray();
             while (!_processedWinningCards)
             {
-                var arrayOfCards = Cards.ToArray();
                 var card = arrayOfCards[indexOfCardToProcess];
                 if (_debug) Console.WriteLine($"Processing card {indexOfCardToProcess} with id {card.Id}");
                 
@@ -96,18 +96,18 @@ public static class Day04
                 var rangeNewCards = new Range(card.Id ,card.Id + card.MyWinningNumbers.Length);
                 if (_debug) Console.WriteLine($"Card has {card.MyWinningNumbers.Count()} winning numbers");
 
-                var topCards = Cards.Take(rangeBeforeNewCards).ToList();
-                var thisCard = Cards.Take(rangeCurrentCard).ToList();
-                var bottomCards = Cards.Take(rangeAfterNewCards).ToList();
+                var topCards = arrayOfCards.Take(rangeBeforeNewCards);
+                var thisCard = arrayOfCards.Take(rangeCurrentCard);
+                var bottomCards = arrayOfCards.Take(rangeAfterNewCards);
                 var newCards = GetOriginalCards(rangeNewCards);
-                if (_debug) Console.WriteLine($"Adding {newCards.Count} cards");
                 
                 var newListOfCards = topCards.ToList();
                 newListOfCards.AddRange(thisCard);
                 newListOfCards.AddRange(newCards);
                 newListOfCards.AddRange(bottomCards);
                 Cards = newListOfCards;
-                if (_debug) Console.WriteLine($"CardCollection now has {TotalNumberOfCards} cards");
+                arrayOfCards = newListOfCards.ToArray();
+                if (_debug) Console.WriteLine($"CardCollection now has {newListOfCards.Count} cards");
 
                 indexOfCardToProcess++;
                 if (_debug) Console.WriteLine($"Processed {indexOfCardToProcess} of {TotalNumberOfCards}");
@@ -118,6 +118,8 @@ public static class Day04
                     lastStatus = (int)sw.Elapsed.TotalMinutes;
                 }
             }
+            sw.Stop();
+            Console.WriteLine($"Processed {Cards.Count()} cards in {sw.Elapsed.Minutes} minutes {sw.Elapsed.Seconds} seconds");
         }
     }
     
