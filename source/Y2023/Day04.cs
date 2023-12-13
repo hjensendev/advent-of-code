@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -6,6 +7,7 @@ namespace Y2023;
 
 public static class Day04
 {
+    private const int MaxThreads = 8;
     private const string PatternGame = @"\d+:";
     private const string PatternCount= @"\d+";
     private const char WinNumbersSeparator = ':';
@@ -32,7 +34,7 @@ public static class Day04
         var cardCollection = GetCards(lines);
         cardCollection.ProcessWinningCards();
 
-        var result = cardCollection.TotalNumberOfCards;
+        var result = cardCollection.Cards.Count();
         Console.WriteLine($"Result: {result}");
         return result.ToString(CultureInfo.InvariantCulture);
     }
@@ -46,7 +48,7 @@ public static class Day04
         foreach (var orgLine in lines)
         {
             var line =  orgLine.Replace("  ", " ");
-            Console.WriteLine($"Process {orgLine}");
+            if (_debug)  Console.WriteLine($"Process {orgLine}");
             var gameLine = gamePattern.Match(line);
             var gameNumber = Convert.ToInt32(countPattern.Match(gameLine.Value).Value);
             var winningNumbers = line.Substring(line.IndexOf(WinNumbersSeparator) + 2 ,
@@ -60,68 +62,69 @@ public static class Day04
     private class CardCollection
     {
         public IEnumerable<Card> Cards;
-        public int StartingNumberOfCards => _originalCards.Count;
-        public int TotalNumberOfCards => Cards.Count();
-        private bool _processedWinningCards = false;
-        private readonly List<Card> _originalCards;
+        private readonly IEnumerable<Card> _originalCards;
 
         public CardCollection(IEnumerable<Card> cards)
         {
-            var cardList = cards.ToList();
-            Cards = cardList;
-            _originalCards = cardList;
+            Cards = cards;
+            _originalCards = Cards.ToArray();
         }
-
-        private IEnumerable<Card> GetOriginalCards(Range range)
-        {
-            return _originalCards.Take(range).ToList();
-        }
+        
 
         public void ProcessWinningCards()
         {
-            Console.WriteLine($"Starting with {StartingNumberOfCards} cards");
-            var indexOfCardToProcess = 0;
+            Console.WriteLine($"Starting with {_originalCards.Count()} cards");
+
             var sw = new Stopwatch();
             sw.Start();
-            var lastStatus = -1;
             var arrayOfCards = Cards.ToArray();
-            while (!_processedWinningCards)
-            {
-                var card = arrayOfCards[indexOfCardToProcess];
-                if (_debug) Console.WriteLine($"Processing card {indexOfCardToProcess} with id {card.Id}");
-                
-                var rangeBeforeNewCards = new Range(0, indexOfCardToProcess);
-                var rangeCurrentCard = new Range(indexOfCardToProcess,indexOfCardToProcess + 1);
-                var rangeAfterNewCards = new Range(indexOfCardToProcess + 1,  arrayOfCards.Length);
-                var rangeNewCards = new Range(card.Id ,card.Id + card.MyWinningNumbers.Length);
-                if (_debug) Console.WriteLine($"Card has {card.MyWinningNumbers.Count()} winning numbers");
 
-                var topCards = arrayOfCards.Take(rangeBeforeNewCards);
-                var thisCard = arrayOfCards.Take(rangeCurrentCard);
-                var bottomCards = arrayOfCards.Take(rangeAfterNewCards);
-                var newCards = GetOriginalCards(rangeNewCards);
-                
-                var newListOfCards = topCards.ToList();
-                newListOfCards.AddRange(thisCard);
-                newListOfCards.AddRange(newCards);
-                newListOfCards.AddRange(bottomCards);
-                Cards = newListOfCards;
-                arrayOfCards = newListOfCards.ToArray();
-                if (_debug) Console.WriteLine($"CardCollection now has {newListOfCards.Count} cards");
-
-                indexOfCardToProcess++;
-                if (_debug) Console.WriteLine($"Processed {indexOfCardToProcess} of {TotalNumberOfCards}");
-                _processedWinningCards = indexOfCardToProcess == newListOfCards.Count;
-                if ((int)sw.Elapsed.TotalMinutes != lastStatus )
-                {
-                    Console.WriteLine($"Card count after {(int)sw.Elapsed.TotalMinutes} minutes is {newListOfCards.Count}");
-                    lastStatus = (int)sw.Elapsed.TotalMinutes;
-                }
-            }
+            var range = ProcessRangeOfCards(0, arrayOfCards.Length);
+            Cards = range;
+ 
             sw.Stop();
-            Console.WriteLine($"Processed {Cards.Count()} cards in {sw.Elapsed.Minutes} minutes {sw.Elapsed.Seconds} seconds");
+            Console.WriteLine($"Processed {Cards.Count()} cards in {sw.Elapsed}");
+        }
+
+        private IEnumerable<Card> ProcessRangeOfCards(int start, int end)
+        {
+            var cardsToProcess = Cards.Take(new Range(start, end)).ToList();
+            var swCycle = new Stopwatch();
+            swCycle.Start();
+            
+            var i = start;
+            while (i <= cardsToProcess.Count - 1)
+            {
+                if (_debug) Console.WriteLine($"Process card at index {i}");
+                var card = cardsToProcess.ElementAt(i);
+                
+                if (_debug) Console.WriteLine($"Card id:{card.Id} has {card.MyWinningNumbers.Length} winners");
+                var prizeCards = ProcessCard(card);
+                cardsToProcess.AddRange(prizeCards);
+                i++;
+            }
+            swCycle.Stop();
+            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} completed cycle in {swCycle.Elapsed}");
+            return cardsToProcess;
+        }
+        
+        
+        private IEnumerable<Card> ProcessCard(Card card)
+        {
+            var result = new List<Card>();
+            for (var j = 0; j < card.MyWinningNumbers.Length; j++)
+            {
+                var prizeCard = _originalCards.ElementAt(card.Id + j);
+                if (_debug) Console.WriteLine($"Add card with id {prizeCard.Id} as prize");
+                result.Add(prizeCard);
+            }
+            return result;
         }
     }
+    
+    
+    
+    
     
     private class Card
     {

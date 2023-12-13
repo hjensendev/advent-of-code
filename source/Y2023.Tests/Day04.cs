@@ -30,13 +30,13 @@ public class Day04
         var exampleResult = Y2023.Day04.Part2(exampleData);
         Assert.AreEqual("30", exampleResult);
     }
-    //
-    // [TestMethod]
-    // public void TestDay04PartTwoReal()
-    // {
-    //     // Example
-    //     var realData = DataFileReader.ReadFileAsArray(4);
-    //     var realResult = Y2023.Day04.Part2(realData);
-    //     Assert.AreEqual("x", realResult);
-    //}
+    
+     [TestMethod]
+     public void TestDay04PartTwoReal()
+     {
+         // Example
+         var realData = DataFileReader.ReadFileAsLines(4);
+         var realResult = Y2023.Day04.Part2(realData);
+         Assert.AreEqual("12648035", realResult);
+    }
 }
