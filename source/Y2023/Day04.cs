@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -9,10 +10,12 @@ public static class Day04
     private const string PatternCount= @"\d+";
     private const char WinNumbersSeparator = ':';
     private const char MyNumbersSeparator = '|';
+    private static bool _debug;
     
     public static string Part1(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
+        _debug = debug;
 
         var cardCollection = GetCards(lines);
         var result = cardCollection.Cards.Sum(card => card.Value);
@@ -24,7 +27,8 @@ public static class Day04
     public static string Part2(string[] lines, bool debug = false)
     {
         if (lines == null) throw new ArgumentNullException(nameof(lines));
-
+        _debug = debug;
+        
         var cardCollection = GetCards(lines);
         cardCollection.ProcessWinningCards();
 
@@ -77,35 +81,42 @@ public static class Day04
         {
             Console.WriteLine($"Starting with {StartingNumberOfCards} cards");
             var indexOfCardToProcess = 0;
+            var sw = new Stopwatch();
+            sw.Start();
+            var lastStatus = -1;
             while (!_processedWinningCards)
             {
-                Console.WriteLine("--");
                 var arrayOfCards = Cards.ToArray();
                 var card = arrayOfCards[indexOfCardToProcess];
-                Console.WriteLine($"Processing card {indexOfCardToProcess} with id {card.Id}");
+                if (_debug) Console.WriteLine($"Processing card {indexOfCardToProcess} with id {card.Id}");
                 
                 var rangeBeforeNewCards = new Range(0, indexOfCardToProcess);
                 var rangeCurrentCard = new Range(indexOfCardToProcess,indexOfCardToProcess + 1);
                 var rangeAfterNewCards = new Range(indexOfCardToProcess + 1,  arrayOfCards.Length);
                 var rangeNewCards = new Range(card.Id ,card.Id + card.MyWinningNumbers.Length);
-                Console.WriteLine($"Card has {card.MyWinningNumbers.Count()} winning numbers");
+                if (_debug) Console.WriteLine($"Card has {card.MyWinningNumbers.Count()} winning numbers");
 
                 var topCards = Cards.Take(rangeBeforeNewCards).ToList();
                 var thisCard = Cards.Take(rangeCurrentCard).ToList();
                 var bottomCards = Cards.Take(rangeAfterNewCards).ToList();
                 var newCards = GetOriginalCards(rangeNewCards);
-                Console.WriteLine($"Adding {newCards.Count} cards");
+                if (_debug) Console.WriteLine($"Adding {newCards.Count} cards");
                 
                 var newListOfCards = topCards.ToList();
                 newListOfCards.AddRange(thisCard);
                 newListOfCards.AddRange(newCards);
                 newListOfCards.AddRange(bottomCards);
                 Cards = newListOfCards;
-                Console.WriteLine($"CardCollection now has {TotalNumberOfCards} cards");
+                if (_debug) Console.WriteLine($"CardCollection now has {TotalNumberOfCards} cards");
 
                 indexOfCardToProcess++;
-                Console.WriteLine($"Processed {indexOfCardToProcess} of {TotalNumberOfCards}");
+                if (_debug) Console.WriteLine($"Processed {indexOfCardToProcess} of {TotalNumberOfCards}");
                 _processedWinningCards = indexOfCardToProcess == newListOfCards.Count;
+                if ((int)sw.Elapsed.TotalMinutes != lastStatus )
+                {
+                    Console.WriteLine($"Card count after {(int)sw.Elapsed.TotalMinutes} minutes is {newListOfCards.Count}");
+                    lastStatus = (int)sw.Elapsed.TotalMinutes;
+                }
             }
         }
     }
@@ -125,7 +136,7 @@ public static class Day04
             MyNumbers = myNumbers;
             MyWinningNumbers = GetMyWinningNumbers();
             Value = CalculateCardValue();
-            Console.WriteLine($"Card {Id} has {MyWinningNumbers.Count()} winners and is worth {Value}");
+            if (_debug) Console.WriteLine($"Card {Id} has {MyWinningNumbers.Count()} winners and is worth {Value}");
         }
 
         private string[] GetMyWinningNumbers()
