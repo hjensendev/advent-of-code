@@ -1,3 +1,5 @@
+using System.Data.Common;
+
 namespace Y2023;
 
 public static class Day05
@@ -21,9 +23,7 @@ public static class Day05
             }
         }
 
-
-
-        var result = 0;
+        var result = almanac.Locations.Min(location => location);
         Console.WriteLine($"Result: {result}");
         return result.ToString();
     }
@@ -100,6 +100,7 @@ public static class Day05
         almanac.AddMap(MapType.LightToTemperature, lightToTemperatureMap);
         almanac.AddMap(MapType.TemperatureToHumidity, temperatureToHumidityMap);
         almanac.AddMap(MapType.HumidityToLocation, humidityToLocationMap);
+        almanac.CalculateLocations();
         
         return almanac;
     }
@@ -107,6 +108,7 @@ public static class Day05
     public class Almanac
     {
         public double[] Seeds;
+        public double[] Locations;
         private IList<Map> _maps;
 
         public Almanac(double[] seeds)
@@ -114,6 +116,21 @@ public static class Day05
             Seeds = seeds;
             _maps = new List<Map>();
         }
+
+        
+        
+        public void CalculateLocations()
+        {
+            var locations = new List<double>();                                          
+            foreach (var seed in Seeds)                                                  
+            {                                                                            
+                var location = GetLocationMapping(seed);                         
+                locations.Add(location);                                                 
+            }                                                                            
+            Locations = locations.ToArray();                                     
+        }
+        
+        
         
         public void AddMap(MapType mapType, IEnumerable<string> mappings)
         {
