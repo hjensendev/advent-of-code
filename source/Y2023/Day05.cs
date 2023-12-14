@@ -12,15 +12,16 @@ public static class Day05
 
         var almanac = ParseText(text);
 
+
         if (debug)
         {
             foreach (var seed in almanac.Seeds)
             {
-                Console.WriteLine($"Seed {seed} is mapped to soil {almanac.GetSoilMapping(seed)} fertilizer {almanac.GetFertilizerMapping(seed)}");
+                Console.WriteLine($"Seed {seed} is mapped to soil {almanac.GetSoilMapping(seed)} fertilizer {almanac.GetFertilizerMapping(seed)} water {almanac.GetWaterMapping(seed)} light {almanac.GetLightMapping(seed)} temperature {almanac.GetTemperatureMapping(seed)} humidity {almanac.GetHumidityMapping(seed)} location {almanac.GetLocationMapping(seed)}");
             }
         }
 
-        //var i = almanac.GetFertilizerMapping(14);
+
 
         var result = 0;
         Console.WriteLine($"Result: {result}");
@@ -158,6 +159,8 @@ public static class Day05
             return GetMapValue(seed, maps);
         }
         
+        
+        
         public double GetFertilizerMapping(double seed)
         {
             if (_trace) Console.WriteLine($"GetFertilizerMapping {seed}");
@@ -165,6 +168,55 @@ public static class Day05
             var maps = _maps.Where(m => m.MapType == MapType.SoilToFertilizer).ToList();
             return GetMapValue(soil, maps);
         }
+        
+        
+        
+        public double GetWaterMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetWaterMapping {seed}");
+            var fertilizer = GetFertilizerMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.FertilizerToWater).ToList();
+            return GetMapValue(fertilizer, maps);
+        }
+        
+        
+        public double GetLightMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetWaterMapping {seed}");
+            var water = GetWaterMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.WaterToLight).ToList();
+            return GetMapValue(water, maps);
+        }
+        
+        
+
+        public double GetTemperatureMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetTemperatureMapping {seed}");
+            var light  = GetLightMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.LightToTemperature).ToList();
+            return GetMapValue(light , maps);
+        }  
+        
+        
+        
+        public double GetHumidityMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetHumidityMapping {seed}");
+            var temperature   = GetTemperatureMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.TemperatureToHumidity).ToList();
+            return GetMapValue(temperature  , maps);
+        }  
+        
+        
+        
+        public double GetLocationMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetLocationMapping {seed}");
+            var humidity   = GetHumidityMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.HumidityToLocation).ToList();
+            return GetMapValue(humidity  , maps);
+        }  
     }
 
 
