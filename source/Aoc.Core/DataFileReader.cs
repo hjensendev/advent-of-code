@@ -45,4 +45,11 @@ public static class DataFileReader
         }
         return data;
     }
+    
+    public static string ReadFileAsString(int day, int? part = 0, bool? example = false)
+    {
+        var data = File.ReadAllText(GetFilename(day,part, example));
+        Console.WriteLine($"There length of the text is  {data.Length} characters");
+        return data;
+    }
 }
