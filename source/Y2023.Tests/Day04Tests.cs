@@ -2,7 +2,7 @@ using Aoc.Core;
 namespace Y2023.Tests;
 
 [TestClass]
-public class Day04
+public class Day04Tests
 {
     [TestMethod]
     public void TestDay04PartOneExample()

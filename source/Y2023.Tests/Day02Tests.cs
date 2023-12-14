@@ -3,7 +3,7 @@ using Y2023;
 namespace Y2023.Tests;
 
 [TestClass]
-public class Day02
+public class Day02Tests
 {
     [TestMethod]
     public void TestDay02PartOneExample()
