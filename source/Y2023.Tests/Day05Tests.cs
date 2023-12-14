@@ -13,14 +13,14 @@ public class Day05Tests
         Assert.AreEqual("35", exampleResult);
     }
     
-    // [TestMethod]
-    // public void TestDay54PartOneReal()
-    // {
-    //     // Real
-    //     var realData = DataFileReader.ReadFileAsLines(5);
-    //     var realResult = Y2023.Day05.Part1(realData);
-    //     Assert.AreEqual("xxx", realResult);
-    // }
+    [TestMethod]
+    public void TestDay54PartOneReal()
+    {
+        // Real
+        var realData = DataFileReader.ReadFileAsString(5);
+        var realResult = Y2023.Day05.Part1(realData);
+        Assert.AreEqual("331445006", realResult);
+    }
     //
     // [TestMethod]
     // public void TestDay05PartTwoExample()
