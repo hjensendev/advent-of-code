@@ -3,6 +3,8 @@ namespace Y2023;
 public static class Day05
 {
     private static bool _debug;
+    private static bool _trace = false;
+
     
     public static string Part1(string text, bool debug = false)
     {
@@ -14,9 +16,11 @@ public static class Day05
         {
             foreach (var seed in almanac.Seeds)
             {
-                Console.WriteLine($"Seed {seed} is mapped to soil {almanac.GetSoilMapping(seed)}");
+                Console.WriteLine($"Seed {seed} is mapped to soil {almanac.GetSoilMapping(seed)} fertilizer {almanac.GetFertilizerMapping(seed)}");
             }
         }
+
+        //var i = almanac.GetFertilizerMapping(14);
 
         var result = 0;
         Console.WriteLine($"Result: {result}");
@@ -120,28 +124,46 @@ public static class Day05
                     .ToArray();
                 var map = new Map(mapType);
                 var range = mappingNumbers[2];
-                map.SourceStart = mappingNumbers[0];
-                map.SourceEnd = mappingNumbers[0] + range;
-                map.DestinationStart = mappingNumbers[1];
-                map.DestinationEnd = mappingNumbers[1] + range;
+                map.SourceStart = mappingNumbers[1];
+                map.SourceEnd = mappingNumbers[1] + range;
+                map.DestinationStart = mappingNumbers[0];
+                map.DestinationEnd = mappingNumbers[0] + range;
                 _maps.Add(map);
             }
         }
 
-        private static double GetMapValue(double seed, Map map)
+        private static double GetMapValue(double value, List<Map> maps)
         {
-            if (!(seed >= map.SourceStart) || !(seed <= map.SourceEnd)) return seed;
-            return map.SourceStart - map.DestinationStart + seed;
+            if (_trace) Console.WriteLine($"Finding map for value {value}");
+            foreach (var map in maps)
+            {
+                if (value >= map.SourceStart && value <= map.SourceEnd)
+                {
+                    var delta = value - map.SourceStart;
+                    var mapValue = map.DestinationStart + delta;
+                    if (_trace) Console.WriteLine($"Found mapping for value {value} in map {map}. Mapped to {mapValue}");
+                    return mapValue;
+                }
+            }
+            if (_trace) Console.WriteLine($"No mapping found for value {value}");
+            return value;
         }
+    
+        
 
         public double GetSoilMapping(double seed)
         {
+            if (_trace) Console.WriteLine($"GetSoilMapping {seed}");
             var maps = _maps.Where(m => m.MapType == MapType.SeedToSoil).ToList();
-            foreach (var mapping in maps.Select(map => GetMapValue(seed, map)).Where(mapping => Math.Abs(seed - mapping) != 0))
-            {
-                return mapping;
-            }
-            return seed;
+            return GetMapValue(seed, maps);
+        }
+        
+        public double GetFertilizerMapping(double seed)
+        {
+            if (_trace) Console.WriteLine($"GetFertilizerMapping {seed}");
+            var soil = GetSoilMapping(seed);
+            var maps = _maps.Where(m => m.MapType == MapType.SoilToFertilizer).ToList();
+            return GetMapValue(soil, maps);
         }
     }
 
@@ -149,7 +171,7 @@ public static class Day05
 
     public class Map
     {
-        public MapType MapType;
+        public readonly MapType MapType;
         public double SourceStart;
         public double SourceEnd;
         public double DestinationStart;
@@ -158,6 +180,11 @@ public static class Day05
         public Map(MapType mapType)
         {
             MapType = mapType;
+        }
+
+        public override string ToString()
+        {
+            return $"{MapType}:{SourceStart}:{SourceEnd} -> {DestinationStart}:{DestinationEnd}";
         }
     }
 
