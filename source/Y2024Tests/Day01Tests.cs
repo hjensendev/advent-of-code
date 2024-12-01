@@ -9,32 +9,40 @@ public class Day01Tests
     [TestMethod]
     public void Test_Day01_Part1_ExampleData()
     {
+        const string expectedResult = "11";
+        
         var data = DataFileReader.ReadFileAsLines(Day,DataFileType.Example);
-        var result = Y2024.Day01.Part1(data,debug:true);
-        Assert.AreEqual("11", result);
+        var actualResult = Y2024.Day01.Part1(data,debug:true);
+        Assert.AreEqual(expectedResult, actualResult);
     } 
     
     [TestMethod]
     public void Test_Day01_Part1_RealData()
     {
+        const string expectedResult = "1938424";
+        
         var data = DataFileReader.ReadFileAsLines(Day,DataFileType.Real);
-        var result = Y2024.Day01.Part1(data);
-        Assert.AreEqual("1938424", result);
+        var actualResult = Y2024.Day01.Part1(data);
+        Assert.AreEqual(expectedResult, actualResult);
     }
     
     [TestMethod]
     public void Test_Day01_Part2_ExampleData()
     {
+        const string expectedResult = "31";
+        
         var data = DataFileReader.ReadFileAsLines(Day,DataFileType.Example);
-        var result = Y2024.Day01.Part2(data,debug:true);
-        Assert.AreEqual("31", result);
+        var actualResult = Y2024.Day01.Part2(data,debug:true);
+        Assert.AreEqual(expectedResult, actualResult);
     } 
     
     [TestMethod]
     public void Test_Day01_Part2_RealData()
     {
+        const string expectedResult = "22014209";
+        
         var data = DataFileReader.ReadFileAsLines(Day,DataFileType.Real);
-        var result = Y2024.Day01.Part2(data);
-        Assert.AreEqual("22014209", result);
+        var actualResult = Y2024.Day01.Part2(data);
+        Assert.AreEqual(expectedResult, actualResult);
     } 
 }
