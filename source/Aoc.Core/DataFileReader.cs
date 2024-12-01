@@ -5,10 +5,8 @@ namespace Aoc.Core;
 
 public static class DataFileReader
 {
-    
-    private static string GetFilename(int day, int? part = 0, bool? example = false)
+    private static string GetFilename(int day, int? part = null, bool? example = false)
     {
-        const string sDataFolder = "Data";
         var workingDir = Directory.GetCurrentDirectory();
         var separator = Path.DirectorySeparatorChar;
         var fileName= $"0{day}.txt".Replace("00", "0");
@@ -20,21 +18,28 @@ public static class DataFileReader
         {
             fileName = fileName.Replace(".txt", "-example.txt");
         }
-        var fileToRead =  $"{workingDir}{separator}{sDataFolder}{separator}{fileName}";
+        var fileToRead =  $"{workingDir}{separator}{Constants.DataFolder}{separator}{fileName}";
         Console.WriteLine($"Reading data from {fileToRead}");
         return fileToRead;
     }
     
-    public static string[] ReadFileAsLines(int day, int? part = 0, bool? example = false)
+    public static string[] ReadFileAsLines(int day, DataSetType dataSetType)
     {
-        var data = File.ReadAllLines(GetFilename(day,part, example));
+        var data = dataSetType switch
+        {
+            DataSetType.Example => File.ReadAllLines(GetFilename(day, null, true)),
+            DataSetType.Example1 => File.ReadAllLines(GetFilename(day, 1, true)),
+            DataSetType.Example2 => File.ReadAllLines(GetFilename(day, 2, true)),
+            DataSetType.Real => File.ReadAllLines(GetFilename(day, null, false)),
+            _ => throw new ArgumentOutOfRangeException(nameof(dataSetType), dataSetType, null)
+        };
         Console.WriteLine($"There are {data.Length} lines");
         return data;
     }
     
-    public static char[,] ReadFileAsArray(int day, int? part = 0, bool? example = false)
+    public static char[,] ReadFileAsArray(int day, DataSetType dataSetType)
     {
-        var lines = ReadFileAsLines(day, part, example);
+        var lines = ReadFileAsLines(day, dataSetType);
         var data = new char[lines[0].Length,lines.Length];
         for (int row = 0; row < lines.Length; row++)
         {
@@ -46,9 +51,16 @@ public static class DataFileReader
         return data;
     }
     
-    public static string ReadFileAsString(int day, int? part = 0, bool? example = false)
+    public static string ReadFileAsString(int day,DataSetType dataSetType)
     {
-        var data = File.ReadAllText(GetFilename(day,part, example));
+        string data = dataSetType switch
+        {
+            DataSetType.Example => File.ReadAllText(GetFilename(day, null, true)),
+            DataSetType.Example1 => File.ReadAllText(GetFilename(day, 1, true)),
+            DataSetType.Example2 => File.ReadAllText(GetFilename(day, 2, true)),
+            DataSetType.Real => File.ReadAllText(GetFilename(day, null, false)),
+            _ => throw new ArgumentOutOfRangeException(nameof(dataSetType), dataSetType, null)
+        };
         Console.WriteLine($"There length of the text is  {data.Length} characters");
         return data;
     }
