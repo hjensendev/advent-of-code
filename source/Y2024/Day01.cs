@@ -10,8 +10,8 @@ public class Day01
     {
         if (data == null) throw new ArgumentNullException(nameof(data));
 
-        var patternLeftToRight = new Regex(Constants.RegxSingleDigit);
-        var patternRightToLeft = new Regex(Constants.RegxSingleDigit, RegexOptions.RightToLeft);
+        var patternLeftToRight = new Regex(Constants.RegExSingleDigit);
+        var patternRightToLeft = new Regex(Constants.RegExSingleDigit, RegexOptions.RightToLeft);
         var list1 = new int[data.Length];
         var list2 = new int[data.Length];
         for (var i = 0; i < data.Length; i++)
@@ -43,8 +43,8 @@ public class Day01
     {
         if (data == null) throw new ArgumentNullException(nameof(data));
 
-        var patternLeftToRight = new Regex(Constants.RegxSingleDigit);
-        var patternRightToLeft = new Regex(Constants.RegxSingleDigit, RegexOptions.RightToLeft);
+        var patternLeftToRight = new Regex(Constants.RegExSingleDigit);
+        var patternRightToLeft = new Regex(Constants.RegExSingleDigit, RegexOptions.RightToLeft);
         var list1 = new int[data.Length];
         var list2 = new int[data.Length];
         for (var i = 0; i < data.Length; i++)
