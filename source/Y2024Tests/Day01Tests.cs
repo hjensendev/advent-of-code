@@ -6,7 +6,7 @@ namespace Y2024Tests;
 public class Day01Tests
 {
     [TestMethod]
-    public void TestDay01PartOneExample()
+    public void Test_Day01_Part1_ExampleData()
     {
         var data = DataFileReader.ReadFileAsLines(1,DataFileType.Example);
         var result = Y2024.Day01.Part1(data,debug:true);
@@ -14,7 +14,7 @@ public class Day01Tests
     } 
     
     [TestMethod]
-    public void TestDay01PartOneReal()
+    public void Test_Day01_Part1_RealData()
     {
         var data = DataFileReader.ReadFileAsLines(1,DataFileType.Real);
         var result = Y2024.Day01.Part1(data);
@@ -22,7 +22,7 @@ public class Day01Tests
     }
     
     [TestMethod]
-    public void TestDay01PartTwoExample()
+    public void Test_Day01_Part2_ExampleData()
     {
         var data = DataFileReader.ReadFileAsLines(1,DataFileType.Example);
         var result = Y2024.Day01.Part2(data,debug:true);
@@ -30,7 +30,7 @@ public class Day01Tests
     } 
     
     [TestMethod]
-    public void TestDay01PartTwoReal()
+    public void Test_Day01_Part2_RealData()
     {
         var data = DataFileReader.ReadFileAsLines(1,DataFileType.Real);
         var result = Y2024.Day01.Part2(data);
