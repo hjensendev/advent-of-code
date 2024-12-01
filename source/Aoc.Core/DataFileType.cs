@@ -1,6 +1,6 @@
 namespace Aoc.Core;
 
-public enum DataSetType
+public enum DataFileType
 {
     Example,
     Example1,
