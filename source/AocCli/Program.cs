@@ -1,6 +1,6 @@
 ﻿using Aoc.Core;
 
-const int day = 1;
+const int day = 2;
 var data = DataFileReader.ReadFileAsLines(day, DataFileType.Real);
-var result = Y2024.Day01.Part1(data);
+var result = Y2024.Day02.Part2(data,true);
 Console.WriteLine($"Result {result}");
