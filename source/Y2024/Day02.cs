@@ -107,7 +107,6 @@ public class Day02
 
     private static int? GetNextBadLevel(int[] levels, bool debug = false)
     {
-        if (debug) Console.WriteLine(ArrayToString(levels));
         const int minDeviation = 1;
         const int maxDeviation = 3;
         var increases = 0;
