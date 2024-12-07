@@ -25,5 +25,15 @@ public class Day04Tests
         var actualResult = Y2024.Day04.Part1(data,debug:false);
         Assert.AreEqual(expectedResult, actualResult);
         
-    }      
+    }     
+    
+    [TestMethod]
+    public void Test_Day04_Part2_ExampleData()
+    {
+        const string expectedResult = "1921";
+        
+        var data = DataFileReader.ReadFileAsLines(Day,DataFileType.Real);
+        var actualResult = Y2024.Day04.Part2(data,debug:false);
+        Assert.AreEqual(expectedResult, actualResult);
+    }   
 }

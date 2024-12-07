@@ -7,10 +7,17 @@ namespace Y2024;
 
 public class Day04
 {
+    private const int PrintDelay = 10;
     public static string Part1(string[] input, bool debug = false)
     {
         var board = new Board(input,debug);
         return board.Count("XMAS").ToString();
+    }
+    
+    public static string Part2(string[] input, bool debug = false)
+    {
+        var board = new Board(input,debug);
+        return board.CountX().ToString();
     }
 
     private class Board
@@ -46,7 +53,6 @@ public class Day04
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-            // Skriv ut rutenettet
             for (var row = 0; row< Height; row++)
             {
                 for (var col = 0; col < Width; col++)
@@ -60,20 +66,83 @@ public class Day04
         private void Print(int row, int col)
         {
             if (!_debug) return;
+            
             if (_highlightedCellRow != -1 && _highlightedCellColumn != -1)
             {
                 Console.SetCursorPosition(_highlightedCellColumn, _highlightedCellRow);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(_grid[_highlightedCellRow,_highlightedCellColumn]);
             }
+            _highlightedCellRow = row;
+            _highlightedCellColumn = col;
             Console.SetCursorPosition(col, row);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(_grid[row,col]);
-            _highlightedCellRow = row;
-            _highlightedCellColumn = col;
+
+            Thread.Sleep(PrintDelay);
+        }
+
+        public int CountX()
+        {
+            var counter = 0;
+            for (var row = 1; row < Height - 1; row++)
+            {
+                for (var col = 1; col < Width - 1; col++)
+                {
+                    if (IsX(row, col)) counter++;
+                }
+            }
+            Console.WriteLine($"MAS Count: {counter}");
+            return counter;
+        }
+
+        private bool IsX(int row, int col)
+        {
+            if (_grid[row, col] != 'A') return false;
             
-            Thread.Sleep(1);            
-        }        
+            // M M
+            //  A
+            // S S
+            if (
+                   _grid[row -1, col -1] == 'M' 
+                && _grid[row -1, col +1] == 'M'
+                && _grid[row +1, col -1] == 'S'
+                && _grid[row +1, col +1] == 'S'
+                ) return true;
+            
+            // S S
+            //  A
+            // M M
+            if (
+                   _grid[row -1, col -1] == 'S' 
+                && _grid[row -1, col +1] == 'S'
+                && _grid[row +1, col -1] == 'M'
+                && _grid[row +1, col +1] == 'M'
+                ) return true;
+            
+            // M S
+            //  A
+            // M S
+            if (
+                   _grid[row -1, col -1] == 'M' 
+                && _grid[row -1, col +1] == 'S'
+                && _grid[row +1, col -1] == 'M'
+                && _grid[row +1, col +1] == 'S'
+            ) return true;
+
+            
+            // S M
+            //  A
+            // S M
+            if (
+                   _grid[row -1, col -1] == 'S' 
+                && _grid[row -1, col +1] == 'M'
+                && _grid[row +1, col -1] == 'S'
+                && _grid[row +1, col +1] == 'M'
+            ) return true;
+
+            return false;
+        }
 
         public int Count(string keyword)
         {
