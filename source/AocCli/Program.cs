@@ -1,5 +1,5 @@
 ﻿using Aoc.Core;
 
-const int day = 3;
-var data = DataFileReader.ReadFileAsString(day, DataFileType.Real);
-Y2024.Day03.Part2(data,true);
+const int day = 4;
+var data = DataFileReader.ReadFileAsLines(day, DataFileType.Real);
+Y2024.Day04.Part1(data,false); 
